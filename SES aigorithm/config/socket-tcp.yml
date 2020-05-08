@@ -1,0 +1,60 @@
+- process1:
+      host: "127.0.0.1"
+      port: 55501
+- process2:
+      host: "127.0.0.1"
+      port: 55502
+- process3:
+      host: "127.0.0.1"
+      port: 55503
+- process4:
+      host: "127.0.0.1"
+      port: 55504
+- process5:
+      host: "127.0.0.1"
+      port: 55505
+- process6:
+      host: "127.0.0.1"
+      port: 55506
+- process7:
+      host: "127.0.0.1"
+      port: 55507
+- process8:
+      host: "127.0.0.1"
+      port: 55508
+- process9:
+      host: "127.0.0.1"
+      port: 55509
+- process10:
+      host: "127.0.0.1"
+      port: 55510
+- process11:
+      host: "127.0.0.1"
+      port: 55511
+- process12:
+      host: "127.0.0.1"
+      port: 55512
+- process13:
+      host: "127.0.0.1"
+      port: 55513
+- process14:
+      host: "127.0.0.1"
+      port: 55514
+- process15:
+      host: "127.0.0.1"
+      port: 55515
+- process16:
+      host: "127.0.0.1"
+      port: 55516
+- process17:
+      host: "127.0.0.1"
+      port: 55517
+- process18:
+      host: "127.0.0.1"
+      port: 55518
+- process19:
+      host: "127.0.0.1"
+      port: 55519
+- process20:
+      host: "127.0.0.1"
+      port: 55520
