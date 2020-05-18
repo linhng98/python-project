@@ -13,7 +13,7 @@ data['hostInfo'] = []
 
 for i in range(numProc):
     portNumber = 55500+i+1
-    data['hostInfo'].append({
+    data['host_info'].append({
         'host': '127.0.0.1',
         'port': portNumber
     })
