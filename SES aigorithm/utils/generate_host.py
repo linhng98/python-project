@@ -9,10 +9,10 @@ if len(sys.argv) > 1:
     numProc = int(sys.argv[1])
 
 data = {}
-data['hostInfo'] = []
+data['host_info'] = []
 
 for i in range(numProc):
-    portNumber = 55500+i+1
+    portNumber = 55500+i
     data['host_info'].append({
         'host': '127.0.0.1',
         'port': portNumber
