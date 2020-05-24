@@ -15,14 +15,23 @@ def get_abs_dir():
 
 
 def thread_job(params, idx):
-    this_pos = params["this_pos"]
+    pid = params["pid"]
     vector_time = params["vector_time"]
     count_msg = params["count_msg"]
     host = params["host"]
+    v_p = params["V_P"]
 
     while count_msg[idx] < number_message:
-        msg_content = {"content": "msg {0} from process {1}".format(
-            count_msg[idx], this_pos+1)}
+
+        # send message, increase vector time
+        lock.acquire()
+        vector_time[pid] += 1
+        lock.release()
+
+        msg_content = {"pid": pid+1,
+                       "vector_time": vector_time,
+                       "V_P": v_p,
+                       "content": "msg {0} from process {1}".format(count_msg[idx]+1, pid+1)}
 
         buffer = json.dumps(msg_content, separators=(',', ':'))
         package = bytes("{0}\r\n{1}".format(len(buffer), buffer), "utf-8")
@@ -31,8 +40,9 @@ def thread_job(params, idx):
             s.connect(host[idx])
             s.sendall(package)
 
+        # update vector process
         lock.acquire()
-        vector_time[this_pos] += 1
+        v_p["P{0}".format(pid+1)] = vector_time
         lock.release()
 
         count_msg[idx] += 1
@@ -40,21 +50,20 @@ def thread_job(params, idx):
     return
 
 
-def process_job(sock, list_tuple_host, this_pos):
+def process_job(sock, list_tuple_host, pid):
 
     # remove this host from list tuple
     list_tuple_host.remove(sock.getsockname())
     vector_time = [0]*(len(list_tuple_host)+1)
     count_msg = [0]*len(list_tuple_host)
-    v_p = "V_P"+str(this_pos+1)
     list_thread = []
 
     params = {  # init params share between thread
         "vector_time": vector_time,
         "host": list_tuple_host,
         "count_msg": count_msg,
-        "this_pos": this_pos,
-        v_p: {}
+        "pid": pid,
+        "V_P": {}
     }
 
     for i in range(number_thread):  # create thread, detach
@@ -63,8 +72,15 @@ def process_job(sock, list_tuple_host, this_pos):
         list_thread.append(x)
 
     count_recv_pkg = 0
+    fw = open("{0}/log/process_{1}.log".format(get_abs_dir(), pid+1), "w")
     while count_recv_pkg < len(list_tuple_host)*number_message:
         conn, _ = sock.accept()
+
+        # new packet arrive, increase vector time
+        lock.acquire()
+        vector_time[pid] += 1
+        lock.release()
+
         list_char = []
         with conn:
             while True:
@@ -76,13 +92,17 @@ def process_job(sock, list_tuple_host, this_pos):
                         break
 
             pkglen = int(''.join(list_char))
-            pkg = conn.recv(pkglen).decode("utf-8")
-            print(pkg)
+            pkg_str = conn.recv(pkglen).decode("utf-8")
+            fw.write(pkg_str+"\n")
+
+            pkg_content = json.loads(pkg_str)
+            print(pkg_content)
             count_recv_pkg += 1
 
+    fw.close()
     for thread in list_thread:
         thread.join()
-        
+
     sock.close()    # close socket
     return
 
@@ -108,15 +128,15 @@ def main():
         list_server_sock.append(sock)  # add list server socket to list
 
     # fork new process
-    pos = 0
+    pid = 0
     for sock in list_server_sock:
         child = os.fork()
         if child:   # in main process, add child id to list
             child_process.append(child)
-            pos += 1
+            pid += 1
         else:  # in child process, do the job
             main_process = False
-            process_job(sock, list_tuple_host, pos)
+            process_job(sock, list_tuple_host, pid)
             break
 
     if main_process:  # if main process, wait child process complete
