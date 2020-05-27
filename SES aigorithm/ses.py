@@ -226,7 +226,8 @@ def main():
     elif n >= 2:
         number_host = int(sys.argv[1])
     # generate host
-    utlh.gen_host(number_host, "{0}/config/socket-host.json".format(get_abs_dir()))
+    utlh.gen_host(
+        number_host, "{0}/config/socket-host.json".format(get_abs_dir()))
 
     main_process = True
     child_process = []
@@ -236,7 +237,10 @@ def main():
 
     # clean log
     log_path = "{0}/log".format(get_abs_dir())
-    shutil.rmtree(log_path)
+
+    if os.path.isdir(log_path):
+        shutil.rmtree(log_path)
+
     os.mkdir(log_path)
 
     with open(hostinfo_path) as fopen:
