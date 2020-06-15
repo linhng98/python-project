@@ -55,22 +55,26 @@ def _handle_PacketIn(event):
     dst_port = table.get((event.connection, packet.dst))
 
     if dst_port is None:
+        # store package info
+        # (switchinfo, src MAC, dst MAC, src ip, dst ip, packet type)
         pkt_info = (event.connection, packet.src, packet.dst,
                     pl.protosrc, pl.protodst, packet.type)
-        if pkt_info in broadcasted_arp:
+
+        # check if packet already broadcasted or not
+        if pkt_info in broadcasted_arp:  # broadcasted packet, drop packet
             msg = of.ofp_packet_out(data=event.ofp)
             msg.actions.append(of.ofp_action_output(port=of.OFPP_NONE))
             event.connection.send(msg)
             return
-
-        broadcasted_arp.append(pkt_info)
-
+        
         # We don't know where the destination is yet.  So, we'll just
         # send the packet out all ports (except the one it came in on!)
         # and hope the destination is out there somewhere. :)
         msg = of.ofp_packet_out(data=event.ofp)
         msg.actions.append(of.ofp_action_output(port=all_ports))
         event.connection.send(msg)
+        # add info broadcasted packet to list
+        broadcasted_arp.append(pkt_info)
     else:
         # Since we know the switch ports for both the source and dest
         # MACs, we can install rules for both directions.
