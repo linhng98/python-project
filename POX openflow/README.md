@@ -6,7 +6,7 @@
 | ------- | --------------- | -------------------------------------- |
 | 1612340 | Nguyễn Văn Linh | tìm hiểu, viết code                    |
 | 1612311 | Đoàn Khuê       | tìm hiểu,test, demo, code              |
-|         | Võ Ngọc Lâm     | tìm hiểu, test,thiết kế custom mininet |
+| 1612321 | Võ Ngọc Lâm     | tìm hiểu, test,thiết kế custom mininet |
 
 ## Topology
 
