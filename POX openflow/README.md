@@ -183,6 +183,8 @@ def launch(disable_flood=False):
 
 ## Kết quả thực hiện
 
+![result](https://raw.githubusercontent.com/nobabykill/python-project/master/POX%20openflow/images/result.png)
+
 ## Câu lệnh
 
 - Start openflow controller
